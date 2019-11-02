@@ -19,7 +19,8 @@ The last character is the brightness of the whole keyboard, in this case 5 (agai
 5: brightness is 4
 Keep in mind: this setting is optional, if brightness is undefined it acts the same as 0 (inherit).
 
-If you update the buffer with colors, don't forget to end each key with a semicolon (;). It is possible to send multiple strings like this at once. A few examples: `000#EEEE00;` `127#000000.4;` `005#FFFFFF;106#00FF00;018#101010;`  `005#FFFFFF;106#00FF00;018#101010.0;` Note: the last two strings result the same. Changing `.0` into `.4` can result different. Also, the position of the brightness setting does not have to be at the last block: `005#FFFFFF.0;106#00FF00;018#101010;` still results the same.
+If you update the buffer with colors, don't forget to end each key with a semicolon (;). It is possible to send multiple strings like this at once. A few examples: `000#EEEE00;` `127#000000.4;` `005#FFFFFF;106#00FF00;018#101010;`  `005#FFFFFF;106#00FF00;018#101010.0;`
+Note: the last two strings result the same. Changing `.0` into `.4` can result different. Also, the position of the brightness setting does not have to be at the last block: `005#FFFFFF.0;106#00FF00;018#101010;` still results the same.
 
 ### Effects
 The hardware controller has some keyboard effects. Just send the name of the effect through the socket without an semicolon on the end. For example: 'rainbow', 'rainbow;' will fail.
