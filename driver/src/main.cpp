@@ -36,8 +36,8 @@ class usb
 		std::cout << "Initializing USB library...\n";
 
 		result = libusb_init(&ctx);
-		libusb_set_debug(ctx, 3);
-		//libusb_set_option(ctx, LIBUSB_OPTION_LOG_LEVEL, 3);
+		//libusb_set_debug(ctx, 3);
+		libusb_set_option(ctx, LIBUSB_OPTION_LOG_LEVEL, 3);
 
 		if ( result < 0 )
 		{
@@ -460,10 +460,6 @@ class controller
 		{
 			return usbObj.UpdateOnly(this->wave);
 		}
-		else if ( std::strcmp(input, "random") == 0 )
-		{
-			return usbObj.UpdateOnly(this->random);
-		}
 		else if ( std::strcmp(input, "rainbow") == 0 )
 		{
 			return usbObj.UpdateOnly(this->rainbow);
@@ -484,10 +480,6 @@ class controller
 		{
 			return usbObj.UpdateOnly(this->aurora);
 		}
-		else if ( std::strcmp(input, "disco") == 0 )
-		{
-			return usbObj.UpdateOnly(this->disco);
-		}
 		else if ( std::strcmp(input, "aurora") == 0 )
 		{
 			return usbObj.UpdateOnly(this->aurora);
@@ -499,10 +491,6 @@ class controller
 		else if ( std::strcmp(input, "explode") == 0 )
 		{
 			return usbObj.UpdateOnly(this->explode);
-		}
-		else if ( std::strcmp(input, "flash") == 0 )
-		{
-			return usbObj.UpdateOnly(this->flash);
 		}
 		else
 		{
