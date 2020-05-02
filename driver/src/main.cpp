@@ -2,7 +2,6 @@
  * main.cpp
  *
  *  Created on: Oct 23, 2019
- *	  Author: quico
  */
 
 #include <stdio.h>
@@ -14,7 +13,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <libusb-1.0/libusb.h>
+//#include <libusb-1.0/libusb.h>
+#include "libusb.h"
 
 #define null NULL
 #define tcp_port 8024
@@ -37,6 +37,7 @@ class usb
 
 		result = libusb_init(&ctx);
 		libusb_set_debug(ctx, 3);
+		//libusb_set_option(ctx, LIBUSB_OPTION_LOG_LEVEL, 3);
 
 		if ( result < 0 )
 		{
@@ -56,10 +57,10 @@ class usb
 	{
 		int result;
 
-		if ( this->check(req) != 0 )
-		{
-			return 1;
-		}
+		//if ( this->check(req) != 0 )
+		//{
+		//	return 1;
+		//}
 
 		if ( this->open() != 0 )
 		{
@@ -92,10 +93,10 @@ class usb
 	{
 		int result;
 
-		if ( this->check(req) != 0 )
-		{
-			return 1;
-		}
+		//if ( this->check(req) != 0 )
+		//{
+		//	return 1;
+		//}
 
 		if ( this->open() != 0 )
 		{
@@ -107,21 +108,21 @@ class usb
 		return result;
 	}
 
-	private:
-	int check(unsigned char* request)
-	{
-		std::cout << "Checking data...\n";
-
-		if ( sizeof(request) != reqS )
-		{
-			std::cout << "Invalid request to send!";
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
+	//private:
+	//int check(unsigned char* request)
+	//{
+	//	std::cout << "Checking data...\n";
+    //
+	//	if ( sizeof(request) != reqS )
+	//	{
+	//		std::cout << "Invalid request to send!\n";
+	//		return 1;
+	//	}
+	//	else
+	//	{
+	//		return 0;
+	//	}
+	//}
 
 	private:
 	int open()
@@ -170,9 +171,11 @@ class usb
 	private:
 	int update(unsigned char* request)
 	{
-		if ( libusb_control_transfer(dev_handle, 0x21, 9, 0x300, 1, request, reqS, 0) != reqS )
+		int res = libusb_control_transfer(dev_handle, 0x21, 9, 0x300, 1, request, reqS, 0);
+
+		if ( res != reqS )
 		{
-			std::cout << "Request failed.\n";
+			std::cout << "Request failed: " << libusb_error_name(res) << "\n";
 			return 3;
 		}
 		else
@@ -187,7 +190,6 @@ class usb
 		int writes;
 
 		std::cout << "Writing data... ";
-		//unsigned char sent[8] = { 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0xFF };
 
 		if ( libusb_bulk_transfer(dev_handle, 2, toSend, dataS, &writes, 0) == 0 )
 		{
@@ -227,16 +229,23 @@ class controller
 	unsigned char reqDis[8] = { 0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	unsigned char reqClr[8] = { 0x12, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00 };
 	unsigned char reqBrt[8] = { 0x08, 0x02, 0x33, 0x00, 0x32, 0x00, 0x00, 0x00 };
-	unsigned char rainbow[8] = { 0x08, 0x02, 0x05, 0x05, 0x24, 0x00, 0x00, 0x00 };
-	unsigned char reactive[8] = { 0x08, 0x02, 0x04, 0x05, 0x024, 0x08, 0x01, 0x00 };
+	unsigned char breathing[8] = { 0x08, 0x02, 0x02, 0x05, 0x24, 0x08, 0x00, 0x00 };
+	unsigned char wave[8] = { 0x08, 0x02, 0x03, 0x05, 0x24, 0x00, 0x08, 0x00 };
+	unsigned char random[8] = { 0x08, 0x02, 0x04, 0x05, 0x24, 0x08, 0x00, 0x00 };
+	unsigned char rainbow[8] = { 0x08, 0x02, 0x05, 0x05, 0x24, 0x08, 0x00, 0x00 };
+	unsigned char grove[8] = { 0x08, 0x02, 0x06, 0x05, 0x24, 0x08, 0x00, 0x00 };
+	unsigned char marquee[8] = { 0x08, 0x02, 0x09, 0x05, 0x24, 0x08, 0x00, 0x00 };
 	unsigned char raindrop[8] = { 0x08, 0x02, 0x0A, 0x05, 0x24, 0x08, 0x00, 0x00 };
-	unsigned char marquee[8] = { 0x08, 0x02, 0x09, 0x05, 0x24, 0x08, 0x00, 0x0 };
-	unsigned char aurora[8] = { 0x08, 0x02, 0x0E, 0x05, 0x24, 0x08, 0x00, 0x0 };
+	unsigned char aurora[8] = { 0x08, 0x02, 0x0E, 0x05, 0x24, 0x08, 0x00, 0x00 };
+
+	unsigned char reactive[8] = { 0x08, 0x02, 0x04, 0x05, 0x24, 0x08, 0x01, 0x00 };
+	unsigned char explode[8] = { 0x08, 0x02, 0x06, 0x05, 0x24, 0x08, 0x01, 0x00 };
 
 	private:
 	usb usbObj;
-	int keys[128];
+
 	unsigned char data[512];
+	char reply[1664+1] = {};
 
 	public:
 	int initialize()
@@ -272,15 +281,17 @@ class controller
 
 		do
 		{
+			int x = 0;
 			int newSocket = 0;
 			int reads = 0;
 			//char msg[256];
-			char msg[16+1] = {};
+			char msg[1664+1] = {};
 			//char reply[2];
 			//int port = htons(tcp_port);
 			socklen_t lenght;
 			struct sockaddr_in serv_addr;
-			struct linger sl;
+			//struct linger sl;
+			int SockOption = 1;
 
 			int sock = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -291,15 +302,23 @@ class controller
 			}
 			else
 			{
-				sl.l_onoff = 1;
-				sl.l_linger = 0;
-
-				if ( setsockopt(sock, SOL_SOCKET, SO_LINGER, &sl, sizeof(sl)) )
+				if ( setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &SockOption, sizeof(SockOption)) )
 				{
 					std::cout << "Failed to set socket options! Exiting...\n";
 					close(sock);
 					return 1;
 				}
+
+
+				//sl.l_onoff = 1;
+				//sl.l_linger = 0;
+
+				//if ( setsockopt(sock, SOL_SOCKET, SO_LINGER, &sl, sizeof(sl)) )
+				//{
+				//	std::cout << "Failed to set socket options! Exiting...\n";
+				//	close(sock);
+				//	return 1;
+				//}
 
 				result = 0;
 			}
@@ -330,12 +349,12 @@ class controller
 			}
 			else
 			{
-				reads = read(newSocket, msg, 255);
+				reads = read(newSocket, msg, 1664);
 				if ( reads < 0 )
 				{
 					std::cout << "Could not read socket input.\nSending reply to client...\n";
 
-					if ( write(newSocket, "1", 1) < 0 )
+					if ( write(newSocket, "Failed to read input!", 22) < 0 )
 					{
 						std::cout << "Failed to send reply. Resetting socket connection...\n";
 					}
@@ -361,12 +380,46 @@ class controller
 						msg[reads] = 0;
 					}
 
-					std::cout << "Data from socket: <" << msg << ">.\n";
+//					if ( write(newSocket, "Data received.", 15) < 0 )
+//					{
+						std::cout << "Data from socket: <" << msg << ">.\n";
+//					}
+//					else
+//					{
+//						std::cout << "Data from socket: <" << msg << ">, reply failed.\n";
+//					}
 
-					if ( process(msg) == quit )
+					x = process(msg);
+
+					if ( x == 9 )
 					{
+						std::cout << "Cleaning up...\n";
+
+						close(newSocket);
+						close(sock);
+
 						std::cout << "Exiting...\n";
 						return 0;
+					}
+					else if ( x == 5 )
+					{
+						this->request();
+
+						if ( write(newSocket, reply, strlen(reply)) < 0 )
+						{
+							std::cout << "Replied data.\n";
+						}
+						else
+						{
+							if ( strlen(reply) == 0 )
+							{
+								std::cout << "Failed to send reply! Request data is empty.\n";
+							}
+							else
+							{
+								std::cout << "Failed to send reply! Request: " << strerror(errno) << reply << "\n";
+							}
+						}
 					}
 				}
 			}
@@ -383,38 +436,73 @@ class controller
 	int process(char* input)
 	{
 		std::string cmd(input);
-		char* keys[3];
 		int bright = 0;
 		int position;
 		int color;
 
 		if ( std::strcmp(input, "quit") == 0 )
 		{
-			return quit;
+			return 9;
+		}
+		else if ( std::strcmp(input, "request") == 0 )
+		{
+			return 5;
 		}
 		else if ( std::strcmp(input, "disable") == 0 )
 		{
 			return usbObj.UpdateOnly(this->reqDis);
 		}
+		else if ( std::strcmp(input, "breathing") == 0 )
+		{
+			return usbObj.UpdateOnly(this->breathing);
+		}
+		else if ( std::strcmp(input, "wave") == 0 )
+		{
+			return usbObj.UpdateOnly(this->wave);
+		}
+		else if ( std::strcmp(input, "random") == 0 )
+		{
+			return usbObj.UpdateOnly(this->random);
+		}
 		else if ( std::strcmp(input, "rainbow") == 0 )
 		{
 			return usbObj.UpdateOnly(this->rainbow);
 		}
-		else if ( std::strcmp(input, "reactive") == 0 )
+		else if ( std::strcmp(input, "grove") == 0 )
 		{
-			return usbObj.UpdateOnly(this->reactive);
-		}
-		else if ( std::strcmp(input, "raindrop") == 0 )
-		{
-			return usbObj.UpdateOnly(this->raindrop);
+			return usbObj.UpdateOnly(this->grove);
 		}
 		else if ( std::strcmp(input, "marquee") == 0 )
 		{
 			return usbObj.UpdateOnly(this->marquee);
 		}
+		else if ( std::strcmp(input, "raindrop") == 0 )
+		{
+			return usbObj.UpdateOnly(this->raindrop);
+		}
 		else if ( std::strcmp(input, "aurora") == 0 )
 		{
 			return usbObj.UpdateOnly(this->aurora);
+		}
+		else if ( std::strcmp(input, "disco") == 0 )
+		{
+			return usbObj.UpdateOnly(this->disco);
+		}
+		else if ( std::strcmp(input, "aurora") == 0 )
+		{
+			return usbObj.UpdateOnly(this->aurora);
+		}
+		else if ( std::strcmp(input, "reactive") == 0 )
+		{
+			return usbObj.UpdateOnly(this->reactive);
+		}
+		else if ( std::strcmp(input, "explode") == 0 )
+		{
+			return usbObj.UpdateOnly(this->explode);
+		}
+		else if ( std::strcmp(input, "flash") == 0 )
+		{
+			return usbObj.UpdateOnly(this->flash);
 		}
 		else
 		{
@@ -428,10 +516,18 @@ class controller
 
 				if ( ptr2 != null )
 				{
+					bright = 0;
 					ptr2[0] = 0;
 					ptr2++;
 
-					sscanf(ptr1,"%03d#%06x.%d",&position,&color,&bright);
+					if ( strchr(ptr1, '.') == null )
+					{
+						sscanf(ptr1,"%03d#%06x",&position,&color);
+					}
+					else
+					{
+						sscanf(ptr1,"%03d#%06x.%d",&position,&color,&bright);
+					}
 
 					this->update(position, color, bright);
 					changed = true;
@@ -439,7 +535,7 @@ class controller
 					ptr1 = ptr2;
 				}
 			}
-			while( ptr2 != null );
+			while ( ptr2 != null );
 
 
 			if ( changed )
@@ -451,6 +547,21 @@ class controller
 				return 1;
 			}
 		}
+	}
+
+	private:
+	int request()
+	{
+		int count;
+
+		for ( count=0; count<128; count++ )
+		{
+			sprintf(&reply[count*11], "%03d#%02x%02x%02x;", count, data[count*4+1], data[count*4+2], data[count*4+3]);
+		}
+
+		reply[count*11] = 0;
+
+		return 0;
 	}
 
 	private:
@@ -506,7 +617,6 @@ class controller
 
 		return 0;
 	}
-
 };
 
 int main()
