@@ -141,7 +141,7 @@ class usb
 			std::cout << "USB device successfully opened.\n";
 		}
 
-		if ( libusb_kernel_driver_active(dev_handle, 0) == 1 )
+		if ( libusb_kernel_driver_active(dev_handle, 1) == 1 )
 		{
 			std::cout << "USB kernel driver is active. Detaching... ";
 
@@ -155,7 +155,7 @@ class usb
 			}
 		}
 
-		if ( libusb_claim_interface(dev_handle, 0) < 0 )
+		if ( libusb_claim_interface(dev_handle, 1) < 0 )
 		{
 			std::cout << "Failed to claim interface! Exiting...";
 			libusb_close(dev_handle);
@@ -171,7 +171,7 @@ class usb
 	private:
 	int update(unsigned char* request)
 	{
-		int res = libusb_control_transfer(dev_handle, 0x21, 9, 0x300, 1, request, reqS, 0);
+		int res = libusb_control_transfer(dev_handle, 0x21, 0x09, 0x300, 1, request, reqS, 0);
 
 		if ( res != reqS )
 		{
