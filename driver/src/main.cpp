@@ -574,7 +574,7 @@ class controller
 		{
 			std::cout << "Key position out of range!\n";
 		}
-		else if ( clr != 000000 )
+		else
 		{
 			data[pos*4] = 0x00;
 			data[pos*4+1] = (clr>>16) & 0xFF;
