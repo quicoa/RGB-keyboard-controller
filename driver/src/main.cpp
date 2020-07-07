@@ -206,7 +206,7 @@ class usb
 
 	int close()
 	{
-		int result = libusb_release_interface(dev_handle, 0);
+		int result = libusb_release_interface(dev_handle, 1);
 
 		libusb_close(dev_handle);
 
