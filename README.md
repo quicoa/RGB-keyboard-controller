@@ -1,6 +1,8 @@
 # RGB-keyboard-controller
 RGB controlller for laptop keyboards (Avell) to manage all keys seperatly.
 
+*Note: The software is currently being rewritten to C only and to be more logic and easier to use.*
+
 Credits to @rodgomesc for his open-source python script which contains the code to communicate with the keyboard hardware controller. The codes that the keyboard expects are adapted from this repository: https://github.com/rodgomesc/avell-unofficial-control-center.
 This application sets up a socket and waits for input. As soon as data is sent through the socket the socket is closed, the buffer of 128 sets of 4 charcters (512 bytes total) is changed depented on the input. After that, the usb connection will be opened, the buffer is sent and the usb connection is closed. That's it.
 
